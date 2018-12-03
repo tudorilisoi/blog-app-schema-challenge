@@ -14,7 +14,7 @@ mongoose.Promise = global.Promise;
 
 //Import app configuration & mongoose model
 const { PORT, DATABASE_URL } = require('./config');   
-const { Post } = require('./models');                  
+const { Author, Post } = require('./models');                  
 
 //Create app instance
 const app = express();                                
