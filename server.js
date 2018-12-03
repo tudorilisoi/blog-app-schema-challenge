@@ -59,17 +59,19 @@ app.post('/posts', (req, res) => {
             return res.status(400).send(message); 
         }
     }
-
+            
     Post.create({
-        title: req.body.title,
-        content: req.body.content,
-        author: req.body.author
-    }).then(post => {
-        res.status(201).json(post.serialize());
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
+                title: req.body.title,
+                content: req.body.content,
+                author: req.body.author
+            }).then(post => {
+                res.status(201).json(post.serialize());
+            }).catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'});
+            });
+       
+    
 });
 
 //PUT by ID route handler

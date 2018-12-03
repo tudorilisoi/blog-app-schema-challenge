@@ -3,7 +3,12 @@
 //Import mongoose dependency
 const mongoose = require('mongoose');
 
-//Declare schmea for mongoose model
+//Declare schema for comments model
+const commentSchema = mongoose.Schema({
+    content: { type: String }
+});
+
+//Declare schmea for blog post model
 const blogPostSchema = mongoose.Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
@@ -11,7 +16,8 @@ const blogPostSchema = mongoose.Schema({
         firstName: { type: String, required: true },
         lastName: { type: String, required: true }
     },
-    created: { type: Date, default: Date.now}
+    created: { type: Date, default: Date.now},
+    comments: [commentSchema]
 });
 
 //Declare virtual property to use for sending data to client
@@ -26,6 +32,7 @@ blogPostSchema.methods.serialize = function() {
         content: this.content,
         author: this.authorName,
         created: this.created,
+        comments: this.comments,
         id: this._id  
     };
 };

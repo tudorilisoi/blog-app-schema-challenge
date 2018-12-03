@@ -71,11 +71,19 @@ function renderBlogPost(post, index) {
     const title = post.title;
     const content = post.content;
     const author = post.author;
+    const date = post.created;
+    const comments = post.comments.map((comment, index) => {
+        const content = comment.content;
+        return `<p data-index="${index}"><small>${content}</small></p>`
+    }).join('');
+
     return `
         <div class="blog-post">
             <h2>${title}</h2>
             <p>${content}</p>
-            <p>Published by ${author}</p>
+            <p>Published by ${author} on ${date}</p>
+            <h3>Comments</h3>
+            <p>${comments}</p>
             <button class="js-delete" data-index="${index}">Delete Post</button>
         </div>
     `
