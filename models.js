@@ -35,12 +35,17 @@ blogPostSchema.pre('findOne', function(next) {
     next();
 });
 
-//Declare virtual property to use for sending data to client
+//Declare virtual property to use for sending blog post author name data to client
 blogPostSchema.virtual('authorName').get(function() {
     return `${this.author.firstName} ${this.author.lastName}`.trim();
 });
 
-//Declare method to control data sent to client
+//Declare virtual property to use for sending author name data to client
+authorSchema.virtual('name').get(function() {
+    return `${this.firstName} ${this.lastName}`.trim();
+});
+
+//Declare method to control blog post data sent to client
 blogPostSchema.methods.serialize = function() {
     return {
         title: this.title,
@@ -49,6 +54,15 @@ blogPostSchema.methods.serialize = function() {
         created: this.created,
         comments: this.comments,
         id: this._id  
+    };
+};
+
+//Declare method to control author data sent to client
+authorSchema.methods.serialize = function() {
+    return {
+        id: this._id,
+        name: this.name,
+        userName: this.userName
     };
 };
 
