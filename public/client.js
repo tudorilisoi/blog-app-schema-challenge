@@ -39,16 +39,13 @@ function deleteBlogPost(id) {
 
 //API call to create blog posts
 //retreive & display updated STATE
-function createBlogPost(title, content, firstName, lastName) {
+function createBlogPost(title, content, authorId) {
     const settings = {
         url: `/posts`,
         data: JSON.stringify({
             title: title,
             content: content,
-            author: {
-                firstName: firstName,
-                lastName: lastName
-            }
+            author_id: authorId
         }),
         contentType: 'application/json',
         dataType: 'json',
@@ -106,15 +103,13 @@ function clickCreatePost() {
         event.preventDefault();
         const title = $('#title').val();
         const content = $('#content').val();
-        const firstName = $('#first-name').val();
-        const lastName = $('#last-name').val();
+        const authorId = $('#author-id').val();
 
-        createBlogPost(title, content, firstName, lastName);
+        createBlogPost(title, content, authorId);
 
         $('#title').val('');
         $('#content').val('');
-        $('#first-name').val('');
-        $('#last-name').val('');
+        $('#author-id').val('');
     });
 }
 
