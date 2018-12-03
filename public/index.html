@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="A simple blog web app">         
+    <title>Taco's Blog</title>                            
+    <link href="" rel="stylesheet" type="text/css">      <!-- add CSS file here -->
+  </head>
+<body>
+  <header role="banner">
+    <h1>Taco's Blog</h1>
+    <p class="js-message" aria-live="assertive" hidden></p>
+  </header>
+  <main role="main">
+    <section role="region" class="js-create-post">
+      <form>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+          
+        <label for="content">Content:</label>
+        <input type="text" id="content" name="content" required>
+          
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" name="first-name" required>
+          
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" name="last-name" required>
+          
+        <button class="js-create-btn">Create Post</button>
+      </form>
+    </section>
+    <section role="region" class="js-blog-posts" aria-live="assertive" hidden>
+
+    </section>
+  </main>
+  <footer role="contentinfo">
+    <p><small>Copyright &copy; 2018 Anthony D'Amico</small></p>
+  </footer>
+  <script type ="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type ="text/javascript" src="client.js"></script>                              
+</body>
+</html>

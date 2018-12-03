@@ -1,0 +1,31 @@
+{
+  "name": "blog-api-mongoose",
+  "version": "1.0.0",
+  "description": "blog api mongoose challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --exit",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miamiyankee13/blog-api-mongoose.git"
+  },
+  "author": "Anthony D'Amico",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miamiyankee13/blog-api-mongoose/issues"
+  },
+  "homepage": "https://github.com/miamiyankee13/blog-api-mongoose#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}
