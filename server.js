@@ -50,7 +50,7 @@ app.get('/posts/:id', (req, res) => {
 
 //POST route handler
 app.post('/posts', (req, res) => {                                        
-    const requiredFields = ['title', 'content', 'author'];  
+    const requiredFields = ['title', 'content', 'author_id'];  
     for (let i = 0; i < requiredFields.length; i++) {
         const field = requiredFields[i];
         if(!(field in req.body)) {
@@ -59,19 +59,28 @@ app.post('/posts', (req, res) => {
             return res.status(400).send(message); 
         }
     }
-            
-    Post.create({
+
+    Author.findById(req.body.author_id).then(author => {
+        if (author) {
+            Post.create({
                 title: req.body.title,
                 content: req.body.content,
-                author: req.body.author
+                author: req.body.author_id
             }).then(post => {
                 res.status(201).json(post.serialize());
             }).catch(err => {
                 console.error(err);
                 res.status(500).json({message: 'Internal server error'});
             });
-       
-    
+        } else {
+            const message = 'Author not found';
+            console.error(message);
+            return res.status(400).send(message);
+        }
+    }).catch(err => {
+        console.error(err);
+        res.status(500).json({message: 'Internal server error'});
+    })    
 });
 
 //PUT by ID route handler
