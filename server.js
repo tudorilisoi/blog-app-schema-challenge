@@ -12,9 +12,13 @@ const jsonParser = bodyParser.json();
 //Configure mongoose to use ES6 promises
 mongoose.Promise = global.Promise;                     
 
-//Import app configuration & mongoose model
+//Import app configuration
 const { PORT, DATABASE_URL } = require('./config');   
-const { Author, Post } = require('./models');                  
+
+
+//Import routers
+const postsRouter = require('./postsRouter');
+const authorsRouter = require('./authorsRouter');
 
 //Create app instance
 const app = express();                                
@@ -22,192 +26,11 @@ const app = express();
 //Middleware
 //-request logging
 //-serve static assets from 'public' folder
-//-parse json requests
+//-routers
 app.use(morgan('common'));                             
-app.use(express.static('public'));                     
-app.use(jsonParser);                                   
-
-
-//GET route handler for /posts
-app.get('/posts', (req, res) => {                                        
-    Post.find().sort({title: 1}).then(posts => {
-        res.json({posts: posts.map(post => post.serialize())});
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//GET with ID route handler for /posts
-app.get('/posts/:id', (req, res) => {                                    
-    Post.findById(req.params.id).then(post => {
-        res.json(post.serialize());
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//POST route handler for /posts
-app.post('/posts', (req, res) => {                                        
-    const requiredFields = ['title', 'content', 'author_id'];  
-    for (let i = 0; i < requiredFields.length; i++) {
-        const field = requiredFields[i];
-        if(!(field in req.body)) {
-            const message = `Missing ${field} in request body`;
-            console.error(message);
-            return res.status(400).send(message); 
-        }
-    }
-
-    Author.findById(req.body.author_id).then(author => {
-        if (author) {
-            Post.create({
-                title: req.body.title,
-                content: req.body.content,
-                author: req.body.author_id
-            }).then(post => {
-                res.status(201).json(post.serialize());
-            }).catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'});
-            });
-        } else {
-            const message = 'Author not found';
-            console.error(message);
-            return res.status(400).send(message);
-        }
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    })    
-});
-
-//PUT by ID route handler for /posts
-app.put('/posts/:id', (req, res) => {                                      
-    if(!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-        const message = `Request path id ${req.params.id} and request body id ${req.body.id} must match`;
-        console.error(message);
-        return res.status(400).json({message: message});
-    }
-
-    const toUpdate = {};
-    const updateableFields = ['title', 'content'];
-
-    updateableFields.forEach(field => {
-        if (field in req.body) {
-            toUpdate[field] = req.body[field];
-        }
-    });
-
-    Post.findByIdAndUpdate(req.params.id, { $set: toUpdate }).then(post => {
-        res.status(200).json(post.serialize());
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//DELETE by ID route handler for /posts
-app.delete('/posts/:id', (req, res) => {                                  
-    Post.findByIdAndRemove(req.params.id).then(post => {
-        res.status(204).end();
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//GET route handler for /authors
-app.get('/authors', (req, res) => {
-    Author.find().sort({name: 1}).then(authors => {
-        res.json({authors: authors.map(author => author.serialize())});
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//POST route handler for /authors
-app.post('/authors', (req, res) => {
-    const requiredFields = ['firstName', 'lastName', 'userName'];
-    for (let i = 0; i < requiredFields.length; i++) {
-        const field = requiredFields[i];
-        if(!(field in req.body)) {
-            const message = `Missing ${field} in req.body`;
-            console.error(message);
-            return res.status(400).send(message);
-        }
-    }
-
-    Author.findOne({userName: req.body.userName}).then(author => {
-        if (author) {
-            const message = 'Username already taken';
-            console.error(message);
-            return res.status(400).send(message);
-        } else {
-            Author.create({
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                userName: req.body.userName
-            }).then(author =>{
-                res.status(201).json(author.serialize());
-            }).catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'});
-            });
-        }
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//PUT request handler for /authors
-app.put('/authors/:id', (req, res) => {
-    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-        const message = `Request path id ${req.params.id} and request body id ${req.body.id} must match`;
-        console.error(message);
-        res.status(400).json({message: message});
-    }
-
-    const toUpdate = {};
-    const updateableFields = ['firstName', 'lastName', 'userName'];
-
-    updateableFields.forEach(field => {
-        if (field in req.body) {
-            toUpdate[field] = req.body[field];
-        }
-    });
-
-    Author.findOne({userName: toUpdate.userName || '', _id: { $ne: req.params.id }}).then(author => {
-        if (author) {
-            const message = 'Username already taken';
-            console.error(message);
-            return res.status(400).send(message);
-        } else {
-            Author.findByIdAndUpdate(req.params.id, { $set: toUpdate}).then(author => {
-                res.status(200).json(author.serialize());
-            }).catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'});
-            });
-        }
-    });
-});
-
-//DELETE request handler for /authors
-app.delete('/authors/:id', (req, res) => {
-    Post.remove({author: req.params.id}).then(() => {
-        Author.findByIdAndRemove(req.params.id).then(author => {
-            console.log(`Deleted blog posts owned by and author with id ${req.params.id}`);
-            res.status(204).json({message: 'Success!'});
-        });
-    }).catch(err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
-});
+app.use(express.static('public'));                                                       
+app.use('/posts', postsRouter);
+app.use('/authors', authorsRouter);
 
 //Catch all handler if route does not exist
 app.use('*', (req, res) => {                      
