@@ -100,7 +100,7 @@ router.put('/:id', jsonParser, (req, res) => {
         }
     });
 
-    Post.findByIdAndUpdate(req.params.id, { $set: toUpdate }).then(post => {
+    Post.findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true }).then(post => {
         res.status(200).json(post.serialize());
     }).catch(err => {
         console.error(err);

@@ -94,7 +94,7 @@ router.put('/:id', jsonParser, (req, res) => {
             console.error(message);
             return res.status(400).send(message);
         } else {
-            Author.findByIdAndUpdate(req.params.id, { $set: toUpdate}).then(author => {
+            Author.findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true }).then(author => {
                 res.status(200).json(author.serialize());
             }).catch(err => {
                 console.error(err);
