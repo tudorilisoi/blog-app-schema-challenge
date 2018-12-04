@@ -24,7 +24,7 @@ const blogPostSchema = mongoose.Schema({
     comments: [commentSchema]
 });
 
-//Declare middleware to allow access to authorName virtual property
+//Declare pre-hook middleware to allow access to authorName virtual property
 blogPostSchema.pre('find', function(next) {
     this.populate('author');
     next();
@@ -35,12 +35,12 @@ blogPostSchema.pre('findOne', function(next) {
     next();
 });
 
-//Declare virtual property to use for sending blog post author name data to client
+//Declare virtual property to use for sending Posr authorName data to client
 blogPostSchema.virtual('authorName').get(function() {
     return `${this.author.firstName} ${this.author.lastName}`.trim();
 });
 
-//Declare virtual property to use for sending author name data to client
+//Declare virtual property to use for sending Author name data to client
 authorSchema.virtual('name').get(function() {
     return `${this.firstName} ${this.lastName}`.trim();
 });

@@ -4,10 +4,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
-
-//Declare parser for json
-const jsonParser = bodyParser.json();
 
 //Configure mongoose to use ES6 promises
 mongoose.Promise = global.Promise;                     

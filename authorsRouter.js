@@ -8,14 +8,16 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 //Import mongoose data models
-const { Author } = require('./models');
+const { Author , Post } = require('./models');
 
 //Create router instance
 const router = express.Router();
 
 //GET route handler for /authors
+//-find all authors, sort by userName, and send a 'serialized' json response
+//-if unsuccessful - send error & display in console
 router.get('/', (req, res) => {
-    Author.find().sort({name: 1}).then(authors => {
+    Author.find().sort({userName: 1}).then(authors => {
         res.json({authors: authors.map(author => author.serialize())});
     }).catch(err => {
         console.error(err);
@@ -24,6 +26,11 @@ router.get('/', (req, res) => {
 });
 
 //POST route handler for /authors
+//-validate request body
+//-check if userName is already taken
+//-create author
+//-send 'serialized' json response
+//-if unsuccesful - send error & display in console
 router.post('/', jsonParser, (req, res) => {
     const requiredFields = ['firstName', 'lastName', 'userName'];
     for (let i = 0; i < requiredFields.length; i++) {
@@ -58,7 +65,13 @@ router.post('/', jsonParser, (req, res) => {
     });
 });
 
-//PUT request handler for /authors
+//PUT route handler for /authors
+//-validate request id
+//-validate updateable fields
+//-check if userName is already taken
+//-update author
+//-send a 'serialized' json response
+//-if unsuccesful - send error & display in console
 router.put('/:id', jsonParser, (req, res) => {
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
         const message = `Request path id ${req.params.id} and request body id ${req.body.id} must match`;
@@ -91,7 +104,11 @@ router.put('/:id', jsonParser, (req, res) => {
     });
 });
 
-//DELETE request handler for /authors
+//DELETE route handler for /authors
+//-delete any blog posts by author
+//-delete author
+//-send a response status of 204
+//-if unsuccesful - send error & display in console
 router.delete('/:id', (req, res) => {
     Post.remove({author: req.params.id}).then(() => {
         Author.findByIdAndRemove(req.params.id).then(author => {

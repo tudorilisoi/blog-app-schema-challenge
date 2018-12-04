@@ -15,6 +15,8 @@ const router = express.Router();
 
 
 //GET route handler for /posts
+//-find all posts, sort by title, and send a 'serialized' json response
+//-if unsuccessful - send error & display in console
 router.get('/', (req, res) => {                                        
     Post.find().sort({title: 1}).then(posts => {
         res.json({posts: posts.map(post => post.serialize())});
@@ -25,6 +27,8 @@ router.get('/', (req, res) => {
 });
 
 //GET with ID route handler for /posts
+//-find post and send a 'serialized' json response
+//-if unsuccesful - send error & display in console
 router.get('/:id', (req, res) => {                                    
     Post.findById(req.params.id).then(post => {
         res.json(post.serialize());
@@ -35,6 +39,11 @@ router.get('/:id', (req, res) => {
 });
 
 //POST route handler for /posts
+//-validate request body
+//-check if author_id exists
+//-create post
+//-send 'serialized' json response
+//-if unsuccesful - send error & display in console
 router.post('/', jsonParser, (req, res) => {                                        
     const requiredFields = ['title', 'content', 'author_id'];  
     for (let i = 0; i < requiredFields.length; i++) {
@@ -69,7 +78,12 @@ router.post('/', jsonParser, (req, res) => {
     })    
 });
 
-//PUT by ID route handler for /posts
+//PUT route handler for /posts
+//-validate request id
+//-validate updateable fields
+//-update post
+//-send a 'serialized' json response
+//-if unsuccesful - send error & display in console
 router.put('/:id', jsonParser, (req, res) => {                                      
     if(!(req.params.id && req.body.id && req.params.id === req.body.id)) {
         const message = `Request path id ${req.params.id} and request body id ${req.body.id} must match`;
@@ -94,7 +108,10 @@ router.put('/:id', jsonParser, (req, res) => {
     });
 });
 
-//DELETE by ID route handler for /posts
+//DELETE route handler for /posts
+//-delete post
+//-send a response status of 204
+//-if unsuccesful - send error & display in console
 router.delete('/:id', (req, res) => {                                  
     Post.findByIdAndRemove(req.params.id).then(post => {
         res.status(204).end();
