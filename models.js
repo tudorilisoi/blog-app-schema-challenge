@@ -37,12 +37,16 @@ blogPostSchema.pre('findOne', function(next) {
 
 //Declare virtual property to use for sending Posr authorName data to client
 blogPostSchema.virtual('authorName').get(function() {
-    return `${this.author.firstName} ${this.author.lastName}`.trim();
+    // return 'Banana'
+    const {author} = this
+    return `${author.firstName} ${author.lastName}`.trim();
 });
 
 //Declare virtual property to use for sending Author name data to client
 authorSchema.virtual('name').get(function() {
-    return `${this.firstName} ${this.lastName}`.trim();
+    // return 'Banana'
+    const {author} = this
+    return `${author.firstName} ${author.lastName}`.trim();
 });
 
 //Declare method to control blog post data sent to client
@@ -66,7 +70,7 @@ authorSchema.methods.serialize = function() {
     };
 };
 
-//Declares mongoose model
+//Declares mongoose model authors
 const Author = mongoose.model('Author', authorSchema);
 const Post = mongoose.model('Post', blogPostSchema);
 
